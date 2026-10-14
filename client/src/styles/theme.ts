@@ -11,7 +11,7 @@ export const brand = {
   name: 'Elvra For Divas',
   tagline: 'Wings to Explore',
   message: 'Comfort Looks Good On You.',
-  phone: '+919876543210',
-  instagram: '@elvrafordivas',
+  phone: '+918015848822',
+  instagram: '@elvra_for_divas',
   freeShippingThreshold: 999,
 } as const;

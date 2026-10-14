@@ -30,7 +30,7 @@ export const OrderSuccessPage: React.FC = () => {
 
   const handleWhatsAppUpdates = () => {
     const text = `Hi Elvra Concierge, I just placed order ${orderNumber}. Please send me tracking and delivery updates on this number.`;
-    window.open(`https://wa.me/919876543210?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/918015848822?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (

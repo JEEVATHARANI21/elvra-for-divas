@@ -3,7 +3,7 @@ import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 
 export const WhatsAppFloat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const phoneNumber = '919876543210';
+  const phoneNumber = '918015848822';
 
   const quickPrompts = [
     { title: 'Track My Order', message: 'Hi Elvra Concierge, I would like to check the tracking status of my order.' },

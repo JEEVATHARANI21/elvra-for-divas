@@ -143,7 +143,7 @@ INSERT INTO settings (`key`, `value`, description) VALUES
 ('shipping_charge', '50', 'Standard delivery fee in INR'),
 ('tax_enabled', 'false', 'Enable separate GST/Tax line (prices already tax-inclusive)'),
 ('tax_percentage', '0', 'GST percentage if enabled'),
-('support_whatsapp', '+919876543210', 'Customer concierge WhatsApp number'),
+('support_whatsapp', '+918015848822', 'Customer concierge WhatsApp number'),
 ('support_email', 'care@elvrafordivas.com', 'Customer service email address'),
 ('brand_tagline', 'Wings to Explore', 'Official brand tagline'),
 ('brand_message', 'Comfort Looks Good On You.', 'Official brand philosophy message');

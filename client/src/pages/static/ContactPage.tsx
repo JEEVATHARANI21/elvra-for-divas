@@ -30,7 +30,7 @@ export const ContactPage: React.FC = () => {
 
             <div className="space-y-3">
               <a
-                href="https://wa.me/919876543210?text=Hello%20Elvra%20team"
+                href="https://wa.me/918015848822?text=Hello%20Elvra%20team"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 bg-emerald-50 rounded border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition-colors"
@@ -38,7 +38,18 @@ export const ContactPage: React.FC = () => {
                 <MessageCircle className="w-5 h-5 text-emerald-600 fill-current shrink-0" />
                 <div>
                   <p className="font-semibold">WhatsApp Concierge</p>
-                  <p className="text-[11px] text-emerald-700">+91 98765 43210 (Mon - Sat, 10 AM - 7 PM)</p>
+                  <p className="text-[11px] text-emerald-700">+91 80158 48822 (Mon - Sat, 10 AM - 7 PM)</p>
+                </div>
+              </a>
+
+              <a
+                href="tel:+918015848822"
+                className="flex items-center gap-3 p-3 bg-cream rounded border border-sand/40 text-charcoal hover:border-sage transition-colors"
+              >
+                <Phone className="w-5 h-5 text-sage shrink-0" />
+                <div>
+                  <p className="font-semibold text-charcoal">Call Us Directly</p>
+                  <p className="text-[11px] text-charcoal/60">+91 80158 48822</p>
                 </div>
               </a>
 

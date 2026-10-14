@@ -217,7 +217,7 @@ export const api = {
         settings: {
           free_shipping_threshold: '999',
           shipping_charge: '50',
-          support_whatsapp: '+919876543210',
+          support_whatsapp: '+918015848822',
           support_email: 'care@elvrafordivas.com',
           brand_tagline: 'Wings to Explore',
           brand_message: 'Comfort Looks Good On You.',
