@@ -234,7 +234,15 @@ export const HomePage: React.FC = () => {
             Community & Stories
           </span>
           <h2 className="font-serif text-3xl text-charcoal font-normal mt-1">
-            Follow @elvrafordivas
+            Follow{' '}
+            <a
+              href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-terracotta hover:underline transition-colors"
+            >
+              @elvra_for_divas
+            </a>
           </h2>
           <p className="text-xs text-charcoal/60 mt-1">
             Tag us to be featured in our seasonal lookbook.
@@ -243,14 +251,14 @@ export const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80', handle: '@elvrafordivas' },
-            { img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&w=600&q=80', handle: '@elvrafordivas' },
-            { img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', handle: '@elvrafordivas' },
-            { img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80', handle: '@elvrafordivas' },
+            { img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
+            { img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
+            { img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
+            { img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
           ].map((item, idx) => (
             <a
               key={idx}
-              href="https://instagram.com/elvrafordivas"
+              href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
               target="_blank"
               rel="noopener noreferrer"
               className="group relative aspect-square overflow-hidden bg-cream block"
@@ -262,7 +270,7 @@ export const HomePage: React.FC = () => {
               />
               <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-cream text-xs font-medium">
                 <span className="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full">
-                  Seen on Instagram &rarr;
+                  Seen on @elvra_for_divas &rarr;
                 </span>
               </div>
             </a>

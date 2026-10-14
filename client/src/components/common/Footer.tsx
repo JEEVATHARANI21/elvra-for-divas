@@ -75,7 +75,7 @@ export const Footer: React.FC = () => {
               </span>
               <div className="flex items-center gap-3">
                 <a
-                  href="https://instagram.com/elvrafordivas"
+                  href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-white border border-sand flex items-center justify-center text-charcoal hover:text-sage hover:border-sage transition-colors"
@@ -92,7 +92,14 @@ export const Footer: React.FC = () => {
                 >
                   <MessageCircle className="w-4 h-4" />
                 </a>
-                <span className="text-xs text-charcoal/60 font-medium">@elvrafordivas</span>
+                <a
+                  href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-charcoal/70 hover:text-sage font-medium transition-colors"
+                >
+                  @elvra_for_divas
+                </a>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Heart, User as UserIcon, Search, Menu, X, ChevronDown, Sparkles } from 'lucide-react';
+import { ShoppingBag, Heart, User as UserIcon, Search, Menu, X, ChevronDown, Sparkles, Instagram } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -309,10 +309,19 @@ export const Navbar: React.FC = () => {
             <Link
               to="/track-order"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-charcoal hover:text-sage py-2"
+              className="block text-charcoal hover:text-sage py-2 border-b border-sand/20"
             >
               Track Your Order
             </Link>
+            <a
+              href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sage-dark font-medium py-2 hover:text-charcoal transition-colors"
+            >
+              <Instagram className="w-4 h-4 text-terracotta" />
+              <span>Follow @elvra_for_divas</span>
+            </a>
           </div>
         )}
       </header>

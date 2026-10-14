@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, Phone, MapPin, Send, Check } from 'lucide-react';
+import { MessageCircle, Mail, Phone, MapPin, Send, Check, Instagram } from 'lucide-react';
 
 export const ContactPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -49,6 +49,19 @@ export const ContactPage: React.FC = () => {
                   <p className="text-[11px] text-charcoal/60">care@elvrafordivas.com</p>
                 </div>
               </div>
+
+              <a
+                href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 bg-pink-50/70 rounded border border-pink-200 text-pink-900 hover:bg-pink-100 transition-colors"
+              >
+                <Instagram className="w-5 h-5 text-pink-700 shrink-0" />
+                <div>
+                  <p className="font-semibold">Instagram DM</p>
+                  <p className="text-[11px] text-pink-800">@elvra_for_divas &bull; Direct Message</p>
+                </div>
+              </a>
 
               <div className="flex items-center gap-3 p-3 bg-cream rounded border border-sand/40">
                 <MapPin className="w-5 h-5 text-sage shrink-0" />
