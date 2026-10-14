@@ -182,7 +182,7 @@ export const HomePage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {(newArrivals.length > 0 ? newArrivals : products.slice(0, 4)).map((prod) => (
+            {(newArrivals.length > 0 ? newArrivals : products.slice(0, 8)).map((prod) => (
               <ProductCard key={prod.id} product={prod} />
             ))}
           </div>
@@ -194,11 +194,11 @@ export const HomePage: React.FC = () => {
         <div className="relative rounded-2xl overflow-hidden bg-sage-light/40 border border-sand/40">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
             {/* Visual */}
-            <div className="aspect-[4/3] lg:aspect-auto lg:h-full relative overflow-hidden">
+            <div className="aspect-[4/3] lg:aspect-auto lg:h-full relative overflow-hidden bg-white/60 p-6 flex items-center justify-center">
               <img
-                src="https://images.unsplash.com/photo-1554412933-514a83d2f3c8?auto=format&fit=crop&w=1200&q=80"
-                alt="Elvra Weekend Lounge Collection"
-                className="w-full h-full object-cover"
+                src="/images/products/product-5.png"
+                alt="Elvra Asymmetric Collar Top"
+                className="w-full max-h-[460px] object-contain drop-shadow-md hover:scale-105 transition-transform duration-700"
               />
             </div>
 
@@ -216,10 +216,10 @@ export const HomePage: React.FC = () => {
               </p>
               <div className="pt-2">
                 <Link
-                  to="/shop?category=co-ord-sets"
-                  className="inline-block px-8 py-4 bg-charcoal hover:bg-sage text-cream text-xs uppercase tracking-[0.2em] font-semibold transition-colors"
+                  to="/product/origami-collar-cap-sleeve-top"
+                  className="inline-block px-8 py-4 bg-charcoal hover:bg-sage text-cream text-xs uppercase tracking-[0.2em] font-semibold transition-colors shadow-elevated"
                 >
-                  Shop Co-ord Sets
+                  Explore Spotlight Piece &rarr;
                 </Link>
               </div>
             </div>
@@ -251,25 +251,26 @@ export const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
-            { img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
-            { img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
-            { img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80', handle: '@elvra_for_divas' },
+            { img: '/images/products/product-9.png', title: '"Be You" Sage Tee', handle: '@elvra_for_divas' },
+            { img: '/images/products/product-6.png', title: '"Satisfy Your Soul" Tee', handle: '@elvra_for_divas' },
+            { img: '/images/products/product-4.png', title: '"Busy Doing Sunday" Tee', handle: '@elvra_for_divas' },
+            { img: '/images/products/product-3.png', title: '"New Beginnings" Tee', handle: '@elvra_for_divas' },
           ].map((item, idx) => (
             <a
               key={idx}
               href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative aspect-square overflow-hidden bg-cream block"
+              className="group relative aspect-square overflow-hidden bg-cream block border border-sand/40 p-4"
             >
               <img
                 src={item.img}
-                alt="Instagram post"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                alt={item.title}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-cream text-xs font-medium">
-                <span className="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full">
+              <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-cream text-xs font-medium p-2 text-center">
+                <span className="font-serif text-sm font-semibold mb-1">{item.title}</span>
+                <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px]">
                   Seen on @elvra_for_divas &rarr;
                 </span>
               </div>
