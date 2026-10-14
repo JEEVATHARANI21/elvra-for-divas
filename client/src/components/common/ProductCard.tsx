@@ -141,6 +141,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.fabric}
             </p>
           )}
+
+          {/* Color Swatches */}
+          {product.availableColors && product.availableColors.length > 0 && (
+            <div className="flex items-center gap-1.5 pt-1.5">
+              {product.availableColors.map((col, idx) => (
+                <span
+                  key={idx}
+                  title={col.name}
+                  className="w-2.5 h-2.5 rounded-full border border-sand shadow-xs inline-block"
+                  style={{ backgroundColor: col.hex }}
+                />
+              ))}
+              <span className="text-[10px] text-charcoal/40 font-sans ml-0.5">
+                {product.availableColors.length} {product.availableColors.length === 1 ? 'shade' : 'shades'}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Pricing & Variants indicator */}
@@ -157,9 +174,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Available Sizes preview */}
-          {product.sizes && product.sizes.length > 0 && (
+          {((product.availableSizes && product.availableSizes.length > 0) || (product.sizes && product.sizes.length > 0)) && (
             <div className="text-[10px] text-charcoal/50 font-medium tracking-wider">
-              {product.sizes.map((s) => s.size_label).join(' / ')}
+              {(product.availableSizes || product.sizes?.map((s) => s.size_label))?.join(' · ')}
             </div>
           )}
         </div>
