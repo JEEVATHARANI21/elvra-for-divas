@@ -11,6 +11,7 @@ interface CartContextType {
   addToBag: (variantId: number, quantity?: number) => Promise<void>;
   updateQuantity: (itemId: number, quantity: number) => Promise<void>;
   removeItem: (itemId: number) => Promise<void>;
+  clearCart: () => Promise<void>;
   refreshCart: () => Promise<void>;
   freeShippingThreshold: number;
 }
@@ -60,6 +61,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await refreshCart();
   };
 
+  const clearCart = async () => {
+    await api.clearCart();
+    await refreshCart();
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -71,6 +77,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addToBag,
         updateQuantity,
         removeItem,
+        clearCart,
         refreshCart,
         freeShippingThreshold,
       }}

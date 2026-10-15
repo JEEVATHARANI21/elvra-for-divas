@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, Heart, ShoppingBag, Truck, RefreshCw, Shield, ChevronDown, ChevronUp, Check, Ruler, Sparkles } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Truck, RefreshCw, Shield, ChevronDown, ChevronUp, Check, Ruler, Sparkles, MessageCircle } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { api } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/common/ProductCard';
+import { openWhatsApp, formatSingleProductOrderMessage, formatProductInquiryMessage } from '../utils/whatsapp';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -102,6 +103,37 @@ export const ProductDetailPage: React.FC = () => {
     } finally {
       setIsAdding(false);
     }
+  };
+
+  const handleOrderOnWhatsApp = () => {
+    if (!product) return;
+    const effectiveSize = selectedSize || product.availableSizes?.[0] || 'Standard';
+    const effectiveColor = selectedColor || product.availableColors?.[0]?.name || 'Standard';
+    const effectivePrice = Number(currentVariant?.price_override || product.discount_price || product.base_price);
+
+    const message = formatSingleProductOrderMessage({
+      title: product.title,
+      color: effectiveColor,
+      size: effectiveSize,
+      quantity,
+      price: effectivePrice,
+      slug: product.slug,
+    });
+    openWhatsApp(message);
+  };
+
+  const handleAskQuestionOnWhatsApp = () => {
+    if (!product) return;
+    const message = formatProductInquiryMessage(
+      {
+        title: product.title,
+        color: selectedColor || undefined,
+        size: selectedSize || undefined,
+        price: Number(currentVariant?.price_override || product.discount_price || product.base_price),
+      },
+      'Could you advise me on the fabric feel, drape, and sizing for this design?'
+    );
+    openWhatsApp(message);
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -357,6 +389,28 @@ export const ProductDetailPage: React.FC = () => {
                     isWishlisted(product.id) ? 'fill-terracotta text-terracotta' : 'text-charcoal'
                   }`}
                 />
+              </button>
+            </div>
+
+            {/* Direct WhatsApp Order Button */}
+            <button
+              onClick={handleOrderOnWhatsApp}
+              disabled={isOutOfStock}
+              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 px-6 text-xs uppercase tracking-[0.15em] font-semibold flex items-center justify-center gap-2 transition-all shadow-sm rounded disabled:opacity-50"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>Order on WhatsApp (Direct Confirmation)</span>
+            </button>
+
+            {/* WhatsApp Sizing / Styling Enquiry Link */}
+            <div className="text-center pt-0.5">
+              <button
+                type="button"
+                onClick={handleAskQuestionOnWhatsApp}
+                className="text-[11px] text-charcoal/70 hover:text-emerald-800 inline-flex items-center gap-1.5 transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="underline underline-offset-2">Need styling advice or sizing guidance? Ask on WhatsApp</span>
               </button>
             </div>
           </div>

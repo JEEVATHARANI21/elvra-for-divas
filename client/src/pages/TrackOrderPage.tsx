@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Package, Truck, CheckCircle2, Clock } from 'lucide-react';
+import { Search, Package, Truck, CheckCircle2, Clock, MessageCircle } from 'lucide-react';
 import { api } from '../services/api';
 
 export const TrackOrderPage: React.FC = () => {
@@ -69,6 +69,22 @@ export const TrackOrderPage: React.FC = () => {
         >
           {isLoading ? 'Searching...' : 'Track Order'}
         </button>
+
+        <div className="pt-2 text-center border-t border-sand/40">
+          <a
+            href={`https://wa.me/918015848822?text=${encodeURIComponent(
+              orderNumber
+                ? `Hi Elvra Concierge, I would like to get tracking updates for order ${orderNumber}.`
+                : 'Hi Elvra Concierge, I would like assistance with my order tracking.'
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-[11px] text-emerald-800 hover:text-emerald-950 font-medium hover:underline"
+          >
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-600 fill-current" />
+            <span>Need instant assistance? Track & chat directly on WhatsApp</span>
+          </a>
+        </div>
       </form>
 
       {error && (

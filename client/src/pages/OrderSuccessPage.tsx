@@ -13,6 +13,14 @@ export const OrderSuccessPage: React.FC = () => {
     async function loadOrder() {
       if (!orderNumber) return;
       try {
+        const local = localStorage.getItem(`elvra_order_${orderNumber}`);
+        if (local) {
+          try {
+            setOrder(JSON.parse(local));
+            setIsLoading(false);
+            return;
+          } catch {}
+        }
         const data = await api.getOrderDetail(orderNumber);
         setOrder(data);
       } catch (err) {
@@ -28,8 +36,10 @@ export const OrderSuccessPage: React.FC = () => {
     ? JSON.parse(order.shipping_address)
     : order?.shipping_address;
 
+  const isWhatsAppOrder = order?.payment_status === 'pending_whatsapp' || orderNumber?.includes('WA');
+
   const handleWhatsAppUpdates = () => {
-    const text = `Hi Elvra Concierge, I just placed order ${orderNumber}. Please send me tracking and delivery updates on this number.`;
+    const text = `Hi Elvra Concierge, I just placed order #${orderNumber}. Please send me the order confirmation, invoice, and courier tracking updates here.`;
     window.open(`https://wa.me/918015848822?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -37,19 +47,21 @@ export const OrderSuccessPage: React.FC = () => {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 space-y-8">
       {/* Confirmation Header */}
       <div className="text-center space-y-4 bg-white p-8 sm:p-12 rounded-lg border border-sand/60 shadow-soft">
-        <div className="w-16 h-16 bg-sage-light rounded-full flex items-center justify-center mx-auto text-sage-dark">
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${isWhatsAppOrder ? 'bg-emerald-100 text-emerald-700' : 'bg-sage-light text-sage-dark'}`}>
           <CheckCircle2 className="w-10 h-10 stroke-[1.75]" />
         </div>
 
         <div className="space-y-1">
-          <span className="text-xs uppercase tracking-[0.25em] text-terracotta font-medium">
-            Payment Confirmed
+          <span className="text-xs uppercase tracking-[0.25em] text-emerald-800 font-bold">
+            {isWhatsAppOrder ? 'Forwarded to WhatsApp Concierge' : 'Payment Confirmed'}
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
             Thank you, Diva!
           </h1>
-          <p className="text-sm text-charcoal/70 font-sans">
-            Your order has been placed and is being lovingly prepared.
+          <p className="text-sm text-charcoal/70 font-sans max-w-md mx-auto">
+            {isWhatsAppOrder
+              ? 'Your order details have been forwarded to our WhatsApp Concierge (+91 80158 48822). Our team will confirm payment and dispatch details with you directly.'
+              : 'Your order has been placed and is being lovingly prepared.'}
           </p>
         </div>
 
@@ -61,10 +73,10 @@ export const OrderSuccessPage: React.FC = () => {
         <div className="pt-4 max-w-md mx-auto">
           <button
             onClick={handleWhatsAppUpdates}
-            className="w-full py-3 px-4 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 hover:bg-emerald-100 transition-colors"
+            className="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
           >
-            <MessageCircle className="w-4 h-4 text-emerald-600 fill-current" />
-            <span>Get Order & Courier Updates on WhatsApp</span>
+            <MessageCircle className="w-4 h-4 fill-current" />
+            <span>Chat with Concierge about Order #{orderNumber} on WhatsApp</span>
           </button>
         </div>
       </div>

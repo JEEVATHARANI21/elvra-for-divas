@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, MessageCircle } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { api } from '../../services/api';
+import { openWhatsApp, formatCartWhatsAppMessage } from '../../utils/whatsapp';
 
 export const CartDrawer: React.FC = () => {
   const { cart, isDrawerOpen, closeDrawer, updateQuantity, removeItem, freeShippingThreshold } = useCart();
@@ -42,6 +43,27 @@ export const CartDrawer: React.FC = () => {
   const handleCheckout = () => {
     closeDrawer();
     navigate('/checkout');
+  };
+
+  const handleWhatsAppOrder = () => {
+    closeDrawer();
+    const shippingFee = amountToFreeShipping === 0 ? 0 : 50;
+    const estTotal = Math.max(0, cart.subtotal - couponDiscount + shippingFee);
+    const message = formatCartWhatsAppMessage(
+      cart.items.map((i) => ({
+        title: i.product_title,
+        color: i.color_name,
+        size: i.size_label,
+        quantity: i.quantity,
+        subtotal: i.subtotal,
+      })),
+      cart.subtotal,
+      shippingFee,
+      estTotal,
+      couponCode || undefined,
+      couponDiscount || undefined
+    );
+    openWhatsApp(message);
   };
 
   return (
@@ -257,13 +279,23 @@ export const CartDrawer: React.FC = () => {
               </div>
 
               {/* CTA Buttons */}
-              <button
-                onClick={handleCheckout}
-                className="w-full bg-sage hover:bg-sage-dark text-cream font-medium py-3.5 px-4 text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2 shadow-soft hover:shadow-elevated transition-all"
-              >
-                <span>Proceed to Checkout</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handleWhatsAppOrder}
+                  className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-3 px-4 text-xs uppercase tracking-[0.12em] flex items-center justify-center gap-2 shadow-sm rounded transition-all"
+                >
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>Order via WhatsApp (Instant)</span>
+                </button>
+
+                <button
+                  onClick={handleCheckout}
+                  className="w-full bg-sage hover:bg-sage-dark text-cream font-medium py-3 px-4 text-xs uppercase tracking-[0.12em] flex items-center justify-center gap-2 shadow-soft hover:shadow-elevated transition-all rounded"
+                >
+                  <span>Standard Checkout</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -7,6 +7,7 @@ import {
   addLocalCartItem,
   updateLocalCartQuantity,
   removeLocalCartItem,
+  clearLocalCart,
 } from '../data/fallbackData';
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api';
@@ -291,6 +292,17 @@ export const api = {
       });
     } catch {
       removeLocalCartItem(itemId);
+    }
+  },
+
+  async clearCart(): Promise<void> {
+    try {
+      await safeFetch(`${API_BASE}/cart`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+    } catch {
+      clearLocalCart();
     }
   },
 

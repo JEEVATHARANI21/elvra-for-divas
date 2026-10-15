@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ArrowRight, ShieldCheck, Tag, ShoppingBag } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowRight, ShieldCheck, Tag, ShoppingBag, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { api } from '../services/api';
+import { openWhatsApp, formatCartWhatsAppMessage } from '../utils/whatsapp';
 
 export const CartPage: React.FC = () => {
   const { cart, updateQuantity, removeItem, freeShippingThreshold } = useCart();
@@ -33,6 +34,24 @@ export const CartPage: React.FC = () => {
     } finally {
       setIsApplying(false);
     }
+  };
+
+  const handleOrderOnWhatsApp = () => {
+    const formatted = formatCartWhatsAppMessage(
+      cart.items.map((i) => ({
+        title: i.product_title,
+        color: i.color_name,
+        size: i.size_label,
+        quantity: i.quantity,
+        subtotal: i.subtotal,
+      })),
+      cart.subtotal,
+      shippingCharge,
+      finalTotal,
+      couponCode || undefined,
+      couponDiscount || undefined
+    );
+    openWhatsApp(formatted);
   };
 
   if (cart.items.length === 0) {
@@ -189,17 +208,27 @@ export const CartPage: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => navigate('/checkout')}
-            className="w-full bg-sage hover:bg-sage-dark text-cream py-4 px-6 text-xs uppercase tracking-[0.2em] font-semibold flex items-center justify-center gap-2 transition-all shadow-elevated"
-          >
-            <span>Proceed to Checkout</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={handleOrderOnWhatsApp}
+              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-4 px-6 text-xs uppercase tracking-[0.15em] font-semibold flex items-center justify-center gap-2 transition-all shadow-sm rounded"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>Order via WhatsApp (Instant)</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/checkout')}
+              className="w-full bg-sage hover:bg-sage-dark text-cream py-4 px-6 text-xs uppercase tracking-[0.2em] font-semibold flex items-center justify-center gap-2 transition-all shadow-elevated rounded"
+            >
+              <span>Proceed to Checkout</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
 
           <div className="flex items-center justify-center gap-2 text-[11px] text-charcoal/60 pt-2">
             <ShieldCheck className="w-4 h-4 text-sage" />
-            <span>Guaranteed Safe & Secure Checkout via Razorpay</span>
+            <span>Instant WhatsApp Confirmation & Razorpay Gateway Available</span>
           </div>
         </div>
       </div>

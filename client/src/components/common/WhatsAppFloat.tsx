@@ -6,11 +6,12 @@ export const WhatsAppFloat: React.FC = () => {
   const phoneNumber = '918015848822';
 
   const quickPrompts = [
-    { title: 'Track My Order', message: 'Hi Elvra Concierge, I would like to check the tracking status of my order.' },
-    { title: 'Size & Fit Advice', message: 'Hello! I need help selecting the perfect size for an Elvra piece.' },
-    { title: 'Product Enquiry', message: 'Hi, I have a question about the fabric and availability of a product.' },
-    { title: 'Easy Returns & Exchanges', message: 'Hi, I would like to request an exchange or return for an order.' },
-    { title: 'Talk to Stylist', message: 'Hi Elvra, I would love styling suggestions for an upcoming trip/event.' },
+    { title: '🛍️ Order on WhatsApp', message: 'Hi Elvra Concierge, I would like to place an order directly on WhatsApp. Please guide me with availability and payment!' },
+    { title: '📦 Track My Order', message: 'Hi Elvra Concierge, I would like to check the tracking status of my order.' },
+    { title: '📏 Size & Fit Advice', message: 'Hello! I need help selecting the perfect size for an Elvra piece.' },
+    { title: '🌿 Product Enquiry', message: 'Hi, I have a question about the fabric, drape and availability of an item.' },
+    { title: '🔄 Exchanges & Returns', message: 'Hi, I would like to request an exchange or return for an order.' },
+    { title: '✨ Talk to Stylist', message: 'Hi Elvra, I would love styling suggestions for an upcoming trip/event.' },
   ];
 
   const handleOpenWhatsApp = (message: string) => {

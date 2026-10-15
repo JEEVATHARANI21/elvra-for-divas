@@ -566,3 +566,10 @@ export function updateLocalCartQuantity(cartItemId: number, quantity: number): C
 export function removeLocalCartItem(cartItemId: number): Cart {
   return updateLocalCartQuantity(cartItemId, 0);
 }
+
+export function clearLocalCart(): Cart {
+  const emptyCart: Cart = { id: 1, items: [], subtotal: 0, count: 0 };
+  saveLocalCart(emptyCart);
+  return emptyCart;
+}
+

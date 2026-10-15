@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Heart, User as UserIcon, Search, Menu, X, ChevronDown, Sparkles, Instagram } from 'lucide-react';
+import { ShoppingBag, Heart, User as UserIcon, Search, Menu, X, ChevronDown, Sparkles, Instagram, MessageCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -92,7 +92,19 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Desktop Navigation & Actions Right */}
-            <div className="flex items-center space-x-5 sm:space-x-6">
+            <div className="flex items-center space-x-4 sm:space-x-5">
+              {/* WhatsApp Concierge */}
+              <a
+                href="https://wa.me/918015848822?text=Hello%20Elvra%20Concierge,%20I'm%20visiting%20the%20website%20and%20have%20an%20inquiry."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-emerald-700 hover:text-emerald-850 transition-colors hidden sm:flex items-center gap-1.5 text-xs font-semibold"
+                title="Chat with WhatsApp Concierge (+91 80158 48822)"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span className="hidden md:inline font-mono text-[11px]">+91 80158 48822</span>
+              </a>
+
               {/* Search Button */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -313,6 +325,15 @@ export const Navbar: React.FC = () => {
             >
               Track Your Order
             </Link>
+            <a
+              href="https://wa.me/918015848822?text=Hello%20Elvra%20Concierge,%20I'm%20visiting%20the%20website%20and%20have%20an%20inquiry."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-emerald-800 font-semibold py-2 hover:text-emerald-950 transition-colors border-b border-sand/20"
+            >
+              <MessageCircle className="w-4 h-4 text-emerald-600 fill-current" />
+              <span>WhatsApp Concierge (+91 80158 48822)</span>
+            </a>
             <a
               href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
               target="_blank"

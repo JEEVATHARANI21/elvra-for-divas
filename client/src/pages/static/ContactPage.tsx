@@ -1,15 +1,39 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, Phone, MapPin, Send, Check, Instagram } from 'lucide-react';
+import { MessageCircle, Mail, Phone, MapPin, Send, Check, Instagram, Sparkles, Clock } from 'lucide-react';
+import { openWhatsApp, formatGeneralInquiryMessage, ELVRA_WHATSAPP_DISPLAY } from '../../utils/whatsapp';
 
 export const ContactPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [topic, setTopic] = useState('Order & Delivery Enquiry');
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formatted = formatGeneralInquiryMessage({
+      name,
+      phone: phone.trim() || undefined,
+      email: email.trim() || undefined,
+      topic,
+      message,
+    });
+    openWhatsApp(formatted);
     setSubmitted(true);
+  };
+
+  const handleQuickTopic = (quickTopic: string, promptText: string) => {
+    setTopic(quickTopic);
+    setMessage(promptText);
+    const formatted = formatGeneralInquiryMessage({
+      name: name || 'Guest Diva',
+      phone: phone || undefined,
+      email: email || undefined,
+      topic: quickTopic,
+      message: promptText,
+    });
+    openWhatsApp(formatted);
   };
 
   return (
@@ -18,27 +42,33 @@ export const ContactPage: React.FC = () => {
         <span className="text-xs uppercase tracking-[0.3em] text-terracotta font-medium">Concierge Service</span>
         <h1 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">Contact Elvra</h1>
         <p className="text-xs text-charcoal/60 max-w-md mx-auto">
-          Whether you need personalized sizing guidance, styling consultation, or order assistance, our team is always delighted to assist you.
+          All inquiries, sizing advice, and orders are answered directly by our founding team on WhatsApp ({ELVRA_WHATSAPP_DISPLAY}).
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Contact Information & WhatsApp */}
+        {/* Contact Information & WhatsApp Concierge */}
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-lg border border-sand/60 shadow-soft space-y-4 text-xs">
-            <h3 className="font-serif text-lg text-charcoal font-medium">Customer Support</h3>
+            <h3 className="font-serif text-lg text-charcoal font-medium">Direct Concierge Channels</h3>
 
             <div className="space-y-3">
               <a
-                href="https://wa.me/918015848822?text=Hello%20Elvra%20team"
+                href={`https://wa.me/918015848822?text=${encodeURIComponent('Hi Elvra Concierge, I would like to enquire about your collection.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-emerald-50 rounded border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition-colors"
+                className="flex items-center gap-3 p-3.5 bg-emerald-50 rounded-lg border border-emerald-300 text-emerald-900 hover:bg-emerald-100 transition-colors shadow-sm"
               >
-                <MessageCircle className="w-5 h-5 text-emerald-600 fill-current shrink-0" />
-                <div>
-                  <p className="font-semibold">WhatsApp Concierge</p>
-                  <p className="text-[11px] text-emerald-700">+91 80158 48822 (Mon - Sat, 10 AM - 7 PM)</p>
+                <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold text-emerald-950">WhatsApp Concierge</p>
+                    <span className="text-[10px] bg-emerald-200/80 text-emerald-900 font-semibold px-2 py-0.5 rounded-full">Fastest</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-800 font-mono mt-0.5">{ELVRA_WHATSAPP_DISPLAY}</p>
+                  <p className="text-[10px] text-emerald-700/80">Orders, Sizing, Tracking & Support &bull; Instant Reply</p>
                 </div>
               </a>
 
@@ -49,7 +79,7 @@ export const ContactPage: React.FC = () => {
                 <Phone className="w-5 h-5 text-sage shrink-0" />
                 <div>
                   <p className="font-semibold text-charcoal">Call Us Directly</p>
-                  <p className="text-[11px] text-charcoal/60">+91 80158 48822</p>
+                  <p className="text-[11px] text-charcoal/60">{ELVRA_WHATSAPP_DISPLAY}</p>
                 </div>
               </a>
 
@@ -103,16 +133,88 @@ export const ContactPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Quick WhatsApp Topics */}
+          <div className="bg-cream/40 p-4 rounded-lg border border-sand/40 space-y-2 text-xs">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-charcoal/60 block">
+              Instant WhatsApp Enquiries
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickTopic('Track My Order', 'Hi, I would like to know the current tracking status of my recent order.')}
+                className="px-2.5 py-1.5 bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-sand/60 rounded text-[11px] font-medium text-charcoal/80 transition-colors"
+              >
+                📦 Track Order
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickTopic('Size Recommendation', 'Hello! Could you suggest the best size for my measurements?')}
+                className="px-2.5 py-1.5 bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-sand/60 rounded text-[11px] font-medium text-charcoal/80 transition-colors"
+              >
+                📏 Size & Fit Advice
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickTopic('Custom or Bulk Order', 'Hi Elvra, I want to place a custom / bulk order. Please guide me with catalog and rates.')}
+                className="px-2.5 py-1.5 bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-sand/60 rounded text-[11px] font-medium text-charcoal/80 transition-colors"
+              >
+                ✨ Bulk / Custom Orders
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickTopic('Exchange / Return Request', 'Hi team, I would like to request an exchange for an item I received.')}
+                className="px-2.5 py-1.5 bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-sand/60 rounded text-[11px] font-medium text-charcoal/80 transition-colors"
+              >
+                🔄 Exchange Request
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Message Form */}
+        {/* Message Form (Sends to WhatsApp) */}
         <div className="bg-white p-6 sm:p-8 rounded-lg border border-sand/60 shadow-soft">
-          <h3 className="font-serif text-lg text-charcoal font-medium mb-4">Send a Message</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-serif text-lg text-charcoal font-medium">Send an Inquiry</h3>
+              <p className="text-xs text-charcoal/60">Redirects directly to WhatsApp chat with our team.</p>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+              <MessageCircle className="w-4 h-4 fill-current" />
+            </div>
+          </div>
+
           {submitted ? (
-            <div className="p-6 bg-sage-light text-sage-dark text-xs rounded border border-sage/40 text-center space-y-2">
-              <Check className="w-8 h-8 mx-auto text-sage-dark" />
-              <p className="font-semibold text-sm">Message Dispatched</p>
-              <p>Thank you, our concierge will respond to your email within 1 business day.</p>
+            <div className="p-6 bg-emerald-50 text-emerald-900 text-xs rounded-lg border border-emerald-300 text-center space-y-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto">
+                <Check className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Opening WhatsApp Chat...</p>
+                <p className="text-[11px] text-emerald-800 mt-1">
+                  Your query has been formulated and sent to {ELVRA_WHATSAPP_DISPLAY}. If WhatsApp didn&apos;t open automatically, click the button below.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const formatted = formatGeneralInquiryMessage({ name, phone, email, topic, message });
+                  openWhatsApp(formatted);
+                }}
+                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-xs font-semibold"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                <span>Open WhatsApp Again</span>
+              </button>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setSubmitted(false)}
+                  className="text-[11px] text-emerald-800 underline hover:text-emerald-950 mt-1"
+                >
+                  Send another query
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
@@ -123,19 +225,51 @@ export const ContactPage: React.FC = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-cream/30 border border-sand px-3 py-2 rounded focus:outline-none focus:border-sage"
+                  placeholder="e.g. Priya Sharma"
+                  className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage"
                 />
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-charcoal/70 uppercase font-semibold mb-1">WhatsApp / Mobile Number *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage"
+                  />
+                </div>
+                <div>
+                  <label className="block text-charcoal/70 uppercase font-semibold mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="diva@example.com (optional)"
+                    className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-charcoal/70 uppercase font-semibold mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-cream/30 border border-sand px-3 py-2 rounded focus:outline-none focus:border-sage"
-                />
+                <label className="block text-charcoal/70 uppercase font-semibold mb-1">Query Topic</label>
+                <select
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage text-charcoal"
+                >
+                  <option value="Order & Delivery Enquiry">Order & Delivery Enquiry</option>
+                  <option value="Product Availability & Sizing">Product Availability & Sizing</option>
+                  <option value="Custom / Bulk Order">Custom / Bulk Order</option>
+                  <option value="Exchange or Return">Exchange or Return</option>
+                  <option value="Styling Consultation">Styling Consultation</option>
+                  <option value="Feedback & Other">Feedback & Other</option>
+                </select>
               </div>
+
               <div>
                 <label className="block text-charcoal/70 uppercase font-semibold mb-1">How can we help? *</label>
                 <textarea
@@ -143,15 +277,22 @@ export const ContactPage: React.FC = () => {
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Tell us what you need assistance with..."
                   className="w-full bg-cream/30 border border-sand p-3 rounded focus:outline-none focus:border-sage"
                 />
               </div>
+
               <button
                 type="submit"
-                className="w-full py-3 bg-sage hover:bg-sage-dark text-cream font-semibold uppercase tracking-wider transition-colors"
+                className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded shadow-sm"
               >
-                Send Message
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>Send Query to WhatsApp</span>
               </button>
+
+              <p className="text-[11px] text-charcoal/50 text-center flex items-center justify-center gap-1">
+                <span>Direct response to your WhatsApp text within minutes during business hours.</span>
+              </p>
             </form>
           )}
         </div>

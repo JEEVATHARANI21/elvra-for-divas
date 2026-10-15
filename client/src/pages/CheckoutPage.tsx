@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2, ChevronRight, Truck, CreditCard, ArrowLeft, Sparkles } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, ChevronRight, Truck, CreditCard, ArrowLeft, Sparkles, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { Order } from '../types';
+import { openWhatsApp, formatOrderWhatsAppMessage, ELVRA_WHATSAPP_DISPLAY } from '../utils/whatsapp';
 
 declare global {
   interface Window {
@@ -12,13 +14,14 @@ declare global {
 }
 
 export const CheckoutPage: React.FC = () => {
-  const { cart, refreshCart } = useCart();
+  const { cart, refreshCart, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [paymentChoice, setPaymentChoice] = useState<'whatsapp' | 'razorpay'>('whatsapp');
 
   // Step 1: Customer Details
   const [formData, setFormData] = useState({
@@ -79,6 +82,101 @@ export const CheckoutPage: React.FC = () => {
   const handleContinueToPayment = () => {
     setCurrentStep(3);
     window.scrollTo(0, 0);
+  };
+
+  // Direct WhatsApp Order Placement
+  const handlePlaceWhatsAppOrder = async (preferredPayment: string = 'WhatsApp UPI / GPay / PhonePe / COD') => {
+    if (!validateStep1()) {
+      setCurrentStep(1);
+      return;
+    }
+
+    setIsProcessing(true);
+    setErrorMessage('');
+
+    try {
+      const orderRef = `ELV-WA-${Date.now().toString().slice(-6)}`;
+
+      const orderData: Order = {
+        id: Date.now(),
+        order_number: orderRef,
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        shipping_address: {
+          recipient_name: formData.name,
+          phone: formData.phone,
+          address_line1: formData.addressLine1,
+          address_line2: formData.addressLine2,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        },
+        items: cart.items.map((i, idx) => ({
+          id: idx + 1,
+          product_name: i.product_title,
+          sku: i.sku,
+          color_name: i.color_name,
+          size_label: i.size_label,
+          unit_price: i.unit_price,
+          quantity: i.quantity,
+          total_price: i.subtotal,
+          image_url: i.image_url,
+        })),
+        subtotal: cart.subtotal,
+        discount_amount: discountAmount,
+        shipping_fee: shippingFee,
+        total_amount: finalTotal,
+        coupon_code: couponCode || undefined,
+        status: 'confirmed',
+        payment_status: 'pending_whatsapp',
+        payment_method: preferredPayment,
+        created_at: new Date().toISOString(),
+      };
+
+      // Store in localStorage for immediate retrieval on OrderSuccessPage
+      localStorage.setItem(`elvra_order_${orderRef}`, JSON.stringify(orderData));
+
+      // Build & Send WhatsApp text
+      const message = formatOrderWhatsAppMessage({
+        orderNumber: orderRef,
+        customerName: formData.name,
+        customerPhone: formData.phone,
+        customerEmail: formData.email || undefined,
+        shippingAddress: {
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2 || undefined,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        },
+        items: cart.items.map((i) => ({
+          title: i.product_title,
+          color: i.color_name,
+          size: i.size_label,
+          quantity: i.quantity,
+          unitPrice: i.unit_price,
+          subtotal: i.subtotal,
+        })),
+        subtotal: cart.subtotal,
+        discountAmount: discountAmount || undefined,
+        couponCode: couponCode || undefined,
+        shippingFee,
+        totalAmount: finalTotal,
+        paymentPreference: preferredPayment,
+      });
+
+      openWhatsApp(message);
+
+      await clearCart();
+      localStorage.removeItem('elvra_applied_coupon');
+      navigate(`/order-success/${orderRef}`);
+    } catch (err: any) {
+      console.error('WhatsApp order placement error:', err);
+      setErrorMessage(err.message || 'Unable to place WhatsApp order');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Launch Razorpay Payment
@@ -329,13 +427,30 @@ export const CheckoutPage: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-4 bg-sage hover:bg-sage-dark text-cream text-xs uppercase tracking-[0.2em] font-semibold transition-colors flex items-center justify-center gap-2"
-              >
-                <span>Continue to Delivery</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              <div className="space-y-3 pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-4 bg-sage hover:bg-sage-dark text-cream text-xs uppercase tracking-[0.2em] font-semibold transition-colors flex items-center justify-center gap-2 rounded"
+                >
+                  <span>Continue to Delivery</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <div className="relative flex py-1 items-center">
+                  <div className="flex-grow border-t border-sand/60"></div>
+                  <span className="flex-shrink mx-3 text-[10px] uppercase font-semibold text-charcoal/50">or instant order</span>
+                  <div className="flex-grow border-t border-sand/60"></div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handlePlaceWhatsAppOrder('Instant WhatsApp Checkout')}
+                  className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-[0.15em] font-semibold transition-colors flex items-center justify-center gap-2 rounded shadow-sm"
+                >
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>Instant Order via WhatsApp</span>
+                </button>
+              </div>
             </form>
           )}
 
@@ -400,73 +515,156 @@ export const CheckoutPage: React.FC = () => {
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
-                <h3 className="font-serif text-xl text-charcoal font-medium">Step 3 — Payment</h3>
-                <p className="text-xs text-charcoal/60 mt-0.5">Encrypted and securely processed by Razorpay.</p>
+                <h3 className="font-serif text-xl text-charcoal font-medium">Step 3 — Order & Payment Method</h3>
+                <p className="text-xs text-charcoal/60 mt-0.5">Select how you would like to complete and confirm your order.</p>
               </div>
 
-              {/* Payment Methods Info Box */}
-              <div className="border border-sand/80 p-5 rounded-lg space-y-4 bg-white">
-                <div className="flex items-center justify-between pb-3 border-b border-sand/40">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-charcoal flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-sage" />
-                    <span>Razorpay Secure Payment Gateway</span>
-                  </span>
-                  <span className="text-[11px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">
-                    Verified
-                  </span>
+              {/* Payment Method Selector Cards */}
+              <div className="space-y-3">
+                {/* Choice 1: WhatsApp Order (Recommended) */}
+                <div
+                  onClick={() => setPaymentChoice('whatsapp')}
+                  className={`p-5 rounded-lg border cursor-pointer transition-all ${
+                    paymentChoice === 'whatsapp'
+                      ? 'border-emerald-600 bg-emerald-50/50 shadow-sm ring-1 ring-emerald-600'
+                      : 'border-sand/80 bg-white hover:border-emerald-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                        <MessageCircle className="w-5 h-5 fill-current" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-charcoal">
+                            Order via WhatsApp Concierge
+                          </span>
+                          <span className="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full">
+                            Recommended
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-charcoal/70 mt-0.5">
+                          Sends order details straight to our WhatsApp ({ELVRA_WHATSAPP_DISPLAY})
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-5 h-5 rounded-full border border-sand flex items-center justify-center">
+                      {paymentChoice === 'whatsapp' && <div className="w-3 h-3 rounded-full bg-emerald-600" />}
+                    </div>
+                  </div>
+
+                  {paymentChoice === 'whatsapp' && (
+                    <div className="mt-4 pt-3 border-t border-emerald-200/80 text-xs text-emerald-950 space-y-2">
+                      <p className="font-medium text-[11px]">
+                        ✓ Instant order reference sent directly to WhatsApp
+                      </p>
+                      <p className="text-[11px] text-emerald-900/80">
+                        ✓ Pay easily via Google Pay, PhonePe, Paytm UPI QR, or Cash on Delivery upon WhatsApp confirmation.
+                      </p>
+                      <p className="text-[11px] text-emerald-900/80">
+                        ✓ Personal sizing verification and priority courier tracking right in your chat.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                <p className="text-xs text-charcoal/70 leading-relaxed">
-                  Upon clicking <strong>&quot;Pay ₹{finalTotal}&quot;</strong>, the official Razorpay checkout popup will open allowing you to complete payment via:
-                </p>
+                {/* Choice 2: Razorpay Online Gateway */}
+                <div
+                  onClick={() => setPaymentChoice('razorpay')}
+                  className={`p-5 rounded-lg border cursor-pointer transition-all ${
+                    paymentChoice === 'razorpay'
+                      ? 'border-sage-dark bg-cream/70 shadow-sm ring-1 ring-sage'
+                      : 'border-sand/80 bg-white hover:border-sand'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-sage text-cream flex items-center justify-center shrink-0">
+                        <CreditCard className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-charcoal">
+                            Razorpay Payment Gateway
+                          </span>
+                          <span className="text-[10px] bg-sand text-charcoal/70 font-semibold px-2 py-0.5 rounded-full">
+                            Online
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-charcoal/70 mt-0.5">
+                          UPI, Debit/Credit Cards, Net Banking & Wallets
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-5 h-5 rounded-full border border-sand flex items-center justify-center">
+                      {paymentChoice === 'razorpay' && <div className="w-3 h-3 rounded-full bg-sage" />}
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                  <div className="p-3 bg-cream rounded border border-sand/40">
-                    <span className="font-bold block">UPI</span>
-                    <span className="text-[10px] text-charcoal/60">GPay, PhonePe, Paytm</span>
-                  </div>
-                  <div className="p-3 bg-cream rounded border border-sand/40">
-                    <span className="font-bold block">Cards</span>
-                    <span className="text-[10px] text-charcoal/60">Visa, Mastercard, RuPay</span>
-                  </div>
-                  <div className="p-3 bg-cream rounded border border-sand/40">
-                    <span className="font-bold block">Net Banking</span>
-                    <span className="text-[10px] text-charcoal/60">All Major Banks</span>
-                  </div>
-                  <div className="p-3 bg-cream rounded border border-sand/40">
-                    <span className="font-bold block">Wallets</span>
-                    <span className="text-[10px] text-charcoal/60">Razorpay Wallets</span>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-sand-light/60 rounded text-[11px] text-charcoal/70 italic flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-sage shrink-0" />
-                  <span>Your card and banking details are processed directly by Razorpay and never touch our servers.</span>
+                  {paymentChoice === 'razorpay' && (
+                    <div className="mt-4 pt-3 border-t border-sand/60 text-xs text-charcoal/80 space-y-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                        <div className="p-2 bg-white rounded border border-sand/40">
+                          <span className="font-bold block text-[11px]">UPI</span>
+                          <span className="text-[10px] text-charcoal/60">GPay, PhonePe</span>
+                        </div>
+                        <div className="p-2 bg-white rounded border border-sand/40">
+                          <span className="font-bold block text-[11px]">Cards</span>
+                          <span className="text-[10px] text-charcoal/60">Visa, Mastercard</span>
+                        </div>
+                        <div className="p-2 bg-white rounded border border-sand/40">
+                          <span className="font-bold block text-[11px]">Net Banking</span>
+                          <span className="text-[10px] text-charcoal/60">Major Banks</span>
+                        </div>
+                        <div className="p-2 bg-white rounded border border-sand/40">
+                          <span className="font-bold block text-[11px]">Wallets</span>
+                          <span className="text-[10px] text-charcoal/60">Paytm & more</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
+              {/* Action Buttons */}
               <div className="flex gap-4 pt-2">
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
                   disabled={isProcessing}
-                  className="px-6 py-4 border border-sand text-xs uppercase tracking-wider font-semibold text-charcoal hover:border-charcoal flex items-center gap-1.5"
+                  className="px-6 py-4 border border-sand text-xs uppercase tracking-wider font-semibold text-charcoal hover:border-charcoal flex items-center gap-1.5 rounded"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={handlePayNow}
-                  disabled={isProcessing}
-                  className="flex-1 py-4 bg-sage hover:bg-sage-dark text-cream text-xs uppercase tracking-[0.2em] font-bold transition-all shadow-elevated flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {isProcessing ? (
-                    <span>Processing Secure Gateway...</span>
-                  ) : (
-                    <span>Pay ₹{finalTotal}</span>
-                  )}
-                </button>
+
+                {paymentChoice === 'whatsapp' ? (
+                  <button
+                    type="button"
+                    onClick={() => handlePlaceWhatsAppOrder('WhatsApp Direct UPI / COD')}
+                    disabled={isProcessing}
+                    className="flex-1 py-4 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-[0.18em] font-bold transition-all shadow-elevated flex items-center justify-center gap-2 disabled:opacity-50 rounded"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-current" />
+                    <span>
+                      {isProcessing ? 'Transmitting to WhatsApp...' : `Confirm Order on WhatsApp (₹${finalTotal})`}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handlePayNow}
+                    disabled={isProcessing}
+                    className="flex-1 py-4 bg-sage hover:bg-sage-dark text-cream text-xs uppercase tracking-[0.2em] font-bold transition-all shadow-elevated flex items-center justify-center gap-2 disabled:opacity-50 rounded"
+                  >
+                    {isProcessing ? (
+                      <span>Processing Secure Gateway...</span>
+                    ) : (
+                      <span>Pay Online ₹{finalTotal}</span>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           )}
