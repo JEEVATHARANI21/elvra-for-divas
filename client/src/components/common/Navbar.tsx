@@ -35,20 +35,43 @@ export const Navbar: React.FC = () => {
       {/* Main Header */}
       <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b border-sand/40 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Mobile Menu Trigger */}
-            <div className="flex items-center lg:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-charcoal hover:text-sage transition-colors"
-                aria-label="Toggle Navigation Menu"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
+          <div className="flex items-center justify-between h-20 gap-4">
+            {/* Left: Mobile Menu Trigger + Brand Logo & Shop Name */}
+            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+              {/* Mobile Menu Trigger */}
+              <div className="flex items-center lg:hidden">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="p-1.5 text-charcoal hover:text-sage transition-colors"
+                  aria-label="Toggle Navigation Menu"
+                >
+                  {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+              </div>
+
+              {/* Brand Logo & Shop Name */}
+              <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+                <img
+                  src="/images/logo.jpeg"
+                  alt="Elvra For Divas"
+                  className="h-11 sm:h-13 w-auto max-w-[130px] sm:max-w-[150px] object-contain mix-blend-multiply transition-transform group-hover:scale-105"
+                />
+                <div className="flex flex-col">
+                  <span className="font-serif text-xl sm:text-2xl font-normal tracking-[0.2em] text-charcoal group-hover:text-sage transition-colors leading-none">
+                    ELVRA
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-charcoal/70 font-sans mt-0.5">
+                    FOR DIVAS
+                  </span>
+                  <span className="text-[8px] font-serif italic text-terracotta tracking-wider hidden sm:block">
+                    Wings to Explore
+                  </span>
+                </div>
+              </Link>
             </div>
 
-            {/* Desktop Navigation Links Left */}
-            <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium tracking-wide">
+            {/* Center: Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center space-x-5 xl:space-x-7 text-sm font-medium tracking-wide">
               <Link to="/shop" className="text-charcoal hover:text-sage transition-colors">
                 Shop All
               </Link>
@@ -72,27 +95,8 @@ export const Navbar: React.FC = () => {
               </Link>
             </nav>
 
-            {/* Brand Logo (Center) */}
-            <div className="flex-1 lg:flex-initial text-center">
-              <Link to="/" className="inline-block group">
-                <div className="flex flex-col items-center">
-                  <span className="font-serif text-2xl sm:text-3xl font-normal tracking-[0.25em] text-charcoal group-hover:text-sage transition-colors">
-                    ELVRA
-                  </span>
-                  <div className="flex items-center gap-1 -mt-1">
-                    <span className="text-[10px] tracking-[0.3em] uppercase text-charcoal/70 font-sans">
-                      FOR DIVAS
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-serif italic text-terracotta tracking-wider">
-                    Wings to Explore
-                  </span>
-                </div>
-              </Link>
-            </div>
-
-            {/* Desktop Navigation & Actions Right */}
-            <div className="flex items-center space-x-4 sm:space-x-5">
+            {/* Right: Desktop Navigation & Actions */}
+            <div className="flex items-center space-x-3.5 sm:space-x-4 shrink-0">
               {/* WhatsApp Concierge */}
               <a
                 href="https://wa.me/918015848822?text=Hello%20Elvra%20Concierge,%20I'm%20visiting%20the%20website%20and%20have%20an%20inquiry."
@@ -276,6 +280,22 @@ export const Navbar: React.FC = () => {
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-white border-b border-sand/50 px-6 py-6 space-y-4 text-base font-medium">
+            <div className="flex items-center gap-3 pb-3 border-b border-sand/40">
+              <img
+                src="/images/logo.jpeg"
+                alt="Elvra For Divas"
+                className="h-10 w-auto object-contain mix-blend-multiply"
+              />
+              <div>
+                <span className="font-serif text-lg font-normal tracking-[0.2em] text-charcoal block leading-none">
+                  ELVRA
+                </span>
+                <span className="text-[9px] tracking-[0.25em] uppercase text-charcoal/70 font-sans">
+                  FOR DIVAS
+                </span>
+              </div>
+            </div>
+
             <Link
               to="/shop"
               onClick={() => setIsMobileMenuOpen(false)}

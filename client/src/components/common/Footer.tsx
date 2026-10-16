@@ -56,10 +56,17 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex flex-col">
-              <span className="font-serif text-2xl tracking-[0.25em] text-charcoal">ELVRA</span>
-              <span className="text-[10px] tracking-[0.3em] uppercase text-charcoal/70">FOR DIVAS</span>
-              <span className="text-xs font-serif italic text-terracotta mt-1">Wings to Explore</span>
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/logo.jpeg"
+                alt="Elvra For Divas Logo"
+                className="h-14 w-auto object-contain mix-blend-multiply"
+              />
+              <div className="flex flex-col">
+                <span className="font-serif text-2xl tracking-[0.2em] text-charcoal leading-none">ELVRA</span>
+                <span className="text-[10px] tracking-[0.3em] uppercase text-charcoal/70 mt-0.5">FOR DIVAS</span>
+                <span className="text-xs font-serif italic text-terracotta mt-0.5">Wings to Explore</span>
+              </div>
             </div>
             <p className="text-sm text-charcoal/70 max-w-sm font-sans leading-relaxed">
               Elvra creates modern casualwear and loungewear designed to move with you. Soft fabrics, thoughtful silhouettes, and effortless styles made for everyday living.
