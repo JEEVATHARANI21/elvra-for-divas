@@ -98,11 +98,11 @@ export const Navbar: React.FC = () => {
                 href="https://wa.me/918015848822?text=Hello%20Elvra%20Concierge,%20I'm%20visiting%20the%20website%20and%20have%20an%20inquiry."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-1.5 text-emerald-700 hover:text-emerald-850 transition-colors hidden sm:flex items-center gap-1.5 text-xs font-semibold"
-                title="Chat with WhatsApp Concierge (+91 80158 48822)"
+                className="p-1.5 text-emerald-700 hover:text-emerald-800 transition-colors flex items-center justify-center"
+                aria-label="Chat on WhatsApp"
+                title="Chat on WhatsApp"
               >
-                <MessageCircle className="w-4 h-4 fill-current" />
-                <span className="hidden md:inline font-mono text-[11px]">+91 80158 48822</span>
+                <MessageCircle className="w-5 h-5 fill-current" />
               </a>
 
               {/* Search Button */}
@@ -332,7 +332,7 @@ export const Navbar: React.FC = () => {
               className="flex items-center gap-2 text-emerald-800 font-semibold py-2 hover:text-emerald-950 transition-colors border-b border-sand/20"
             >
               <MessageCircle className="w-4 h-4 text-emerald-600 fill-current" />
-              <span>WhatsApp Concierge (+91 80158 48822)</span>
+              <span>WhatsApp Concierge</span>
             </a>
             <a
               href="https://instagram.com/elvra_for_divas?rpxt=dWF4YXZudm9sa3Zj"
