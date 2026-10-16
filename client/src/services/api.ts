@@ -8,6 +8,11 @@ import {
   updateLocalCartQuantity,
   removeLocalCartItem,
   clearLocalCart,
+  getActiveProducts,
+  saveActiveProduct,
+  deleteActiveProduct,
+  createActiveProduct,
+  resetActiveProducts,
 } from '../data/fallbackData';
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api';
@@ -61,7 +66,7 @@ export const api = {
       throw new Error('No live products returned');
     } catch {
       // Fallback local filtering
-      let list = [...FALLBACK_PRODUCTS];
+      let list = [...getActiveProducts()];
 
       if (params?.category) {
         list = list.filter(
@@ -110,13 +115,14 @@ export const api = {
       }
       throw new Error('Product not found via API');
     } catch {
-      const found = FALLBACK_PRODUCTS.find((p) => p.slug === slug);
+      const allActive = getActiveProducts();
+      const found = allActive.find((p) => p.slug === slug);
       if (!found) {
         throw new Error('Product not found');
       }
       return {
         ...found,
-        relatedProducts: FALLBACK_PRODUCTS.filter((p) => p.id !== found.id && p.category_id === found.category_id).slice(0, 4),
+        relatedProducts: allActive.filter((p) => p.id !== found.id && p.category_id === found.category_id).slice(0, 4),
       };
     }
   },
@@ -492,6 +498,11 @@ export const api = {
 
   // Auth
   async login(email: string, _password: string): Promise<{ user: User; token: string }> {
+    const isAdmin = email.toLowerCase().includes('admin');
+    if (isAdmin && _password !== 'Elvra@2005') {
+      throw new Error('Invalid admin password. The correct password is Elvra@2005');
+    }
+
     try {
       const data = await safeFetch(`${API_BASE}/auth/login`, {
         method: 'POST',
@@ -500,8 +511,10 @@ export const api = {
       });
       if (data && data.success && data.token) return data;
       throw new Error('Login failed');
-    } catch {
-      const isAdmin = email.toLowerCase().includes('admin');
+    } catch (err: any) {
+      if (isAdmin && _password !== 'Elvra@2005') {
+        throw new Error('Invalid admin password. The correct password is Elvra@2005');
+      }
       const user: User = {
         id: isAdmin ? 1 : 2,
         name: isAdmin ? 'Elvra Admin' : 'Aadhya Sharma',
@@ -596,11 +609,12 @@ export const api = {
       if (data && data.success && data.stats) return data.stats;
       throw new Error('Stats error');
     } catch {
+      const products = getActiveProducts();
       return {
         totalRevenue: 284500,
         totalOrders: 142,
         totalCustomers: 98,
-        totalProducts: 6,
+        totalProducts: products.length,
       };
     }
   },
@@ -613,7 +627,7 @@ export const api = {
       if (data && data.success && data.products) return data.products;
       throw new Error('Products error');
     } catch {
-      return FALLBACK_PRODUCTS;
+      return getActiveProducts();
     }
   },
 
@@ -624,10 +638,40 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify(_productData),
       });
-      return data;
-    } catch {
-      return { success: true, message: 'Product created (demo)' };
-    }
+      if (data && data.success) return data;
+    } catch {}
+    const newProd = createActiveProduct(_productData);
+    return { success: true, message: 'Product created successfully', product: newProd };
+  },
+
+  async updateAdminProduct(updatedProduct: Product): Promise<any> {
+    try {
+      const data = await safeFetch(`${API_BASE}/admin/products/${updatedProduct.id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(updatedProduct),
+      });
+      if (data && data.success) return data;
+    } catch {}
+    saveActiveProduct(updatedProduct);
+    return { success: true, message: 'Product updated successfully' };
+  },
+
+  async deleteAdminProduct(productId: number): Promise<any> {
+    try {
+      const data = await safeFetch(`${API_BASE}/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      if (data && data.success) return data;
+    } catch {}
+    deleteActiveProduct(productId);
+    return { success: true, message: 'Product deleted successfully' };
+  },
+
+  async resetAdminProducts(): Promise<any> {
+    resetActiveProducts();
+    return { success: true, message: 'Catalog reset to defaults' };
   },
 
   async getAdminOrders(): Promise<Order[]> {

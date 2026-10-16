@@ -7,7 +7,7 @@ export const AdminLoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('admin@elvra.com');
-  const [password, setPassword] = useState('admin123');
+  const [password, setPassword] = useState('Elvra@2005');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,6 +16,9 @@ export const AdminLoginPage: React.FC = () => {
     setIsLoading(true);
     setError('');
     try {
+      if (password.trim() !== 'Elvra@2005') {
+        throw new Error('Incorrect password. Please enter the correct admin password: Elvra@2005');
+      }
       await login(email.trim(), password);
       navigate('/admin');
     } catch (err: any) {
@@ -36,11 +39,11 @@ export const AdminLoginPage: React.FC = () => {
             ELVRA FOR DIVAS
           </span>
           <h1 className="font-serif text-2xl text-charcoal font-semibold">Admin Portal</h1>
-          <p className="text-xs text-charcoal/60">Manage catalog, inventory, orders, and sales performance.</p>
+          <p className="text-xs text-charcoal/60">Manage catalog, inventory, pricing, images, and content.</p>
         </div>
 
         {error && (
-          <div className="p-3 bg-terracotta-light text-terracotta text-xs rounded border border-terracotta/30 text-center">
+          <div className="p-3 bg-terracotta-light text-terracotta text-xs rounded border border-terracotta/30 text-center font-medium">
             {error}
           </div>
         )}
@@ -64,14 +67,15 @@ export const AdminLoginPage: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage"
+              placeholder="Elvra@2005"
+              className="w-full bg-cream/30 border border-sand px-3 py-2.5 rounded focus:outline-none focus:border-sage font-medium tracking-wider"
             />
           </div>
 
           <div className="p-3 bg-sand-light/50 rounded border border-sand/40 text-[11px] text-charcoal/70">
-            <strong>Default Credentials:</strong> <br />
+            <strong>Administrator Access:</strong> <br />
             Email: <code className="text-charcoal font-semibold">admin@elvra.com</code> <br />
-            Password: <code className="text-charcoal font-semibold">admin123</code>
+            Password: <code className="text-charcoal font-semibold bg-white px-1.5 py-0.5 rounded border border-sand/60">Elvra@2005</code>
           </div>
 
           <button

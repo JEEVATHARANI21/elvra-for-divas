@@ -4,9 +4,27 @@ import { LayoutDashboard, Package, ShoppingCart, LogOut, Store, ArrowLeft } from
 import { useAuth } from '../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    if (!isLoading && (!user || user.role !== 'admin')) {
+      navigate('/admin/login', { replace: true });
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-sand-light/50 font-serif text-charcoal/60">
+        Verifying administrator session...
+      </div>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();

@@ -201,8 +201,12 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="border-t border-sand/40 mt-16 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal/60">
           <p>&copy; {new Date().getFullYear()} Elvra For Divas. All rights reserved. Wings to Explore&trade;.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <span>Powered by Razorpay Secure &bull; UPI &bull; Cards &bull; NetBanking</span>
+            <span className="text-sand-dark hidden sm:inline">&bull;</span>
+            <Link to="/admin/login" className="hover:text-charcoal transition-colors font-medium text-charcoal/50 hover:underline">
+              Admin Login
+            </Link>
           </div>
         </div>
       </div>

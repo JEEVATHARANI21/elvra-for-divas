@@ -573,3 +573,87 @@ export function clearLocalCart(): Cart {
   return emptyCart;
 }
 
+const LOCAL_PRODUCTS_KEY = 'elvra_custom_products';
+
+export function getActiveProducts(): Product[] {
+  const custom = localStorage.getItem(LOCAL_PRODUCTS_KEY);
+  if (custom) {
+    try {
+      const parsed = JSON.parse(custom);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch {}
+  }
+  return FALLBACK_PRODUCTS;
+}
+
+export function saveActiveProduct(updatedProduct: Product): Product[] {
+  const list = [...getActiveProducts()];
+  const idx = list.findIndex((p) => p.id === updatedProduct.id);
+  if (idx > -1) {
+    list[idx] = { ...list[idx], ...updatedProduct };
+  } else {
+    list.unshift(updatedProduct);
+  }
+  localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(list));
+  return list;
+}
+
+export function deleteActiveProduct(productId: number): Product[] {
+  const list = getActiveProducts().filter((p) => p.id !== productId);
+  localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(list));
+  return list;
+}
+
+export function createActiveProduct(data: any): Product {
+  const list = getActiveProducts();
+  const newId = Date.now();
+  const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `product-${newId}`;
+
+  const newProduct: Product = {
+    id: newId,
+    title: data.title,
+    slug,
+    subtitle: data.subtitle || '',
+    description: data.description || '',
+    fabric: data.fabric || '100% Combed Cotton',
+    fit_type: data.fitType || 'Relaxed Fit',
+    care_instructions: data.careInstructions || 'Machine wash cold with like colors.',
+    base_price: Number(data.basePrice) || 899,
+    discount_price: data.discountPrice ? Number(data.discountPrice) : null,
+    category_id: data.categoryId || 1,
+    category_name: data.categoryName || 'Everyday Tops',
+    category_slug: data.categorySlug || 'everyday-tops',
+    primary_image: data.primaryImage || data.images?.[0] || '/images/products/product-1.png',
+    secondary_image: data.secondaryImage || data.images?.[1] || data.primaryImage || '/images/products/product-1.png',
+    images: (data.images || [data.primaryImage || '/images/products/product-1.png']).map((url: string, i: number) => ({
+      id: newId + i,
+      image_url: url,
+      is_primary: i === 0,
+      sort_order: i,
+    })),
+    variants: data.variants && data.variants.length > 0 ? data.variants : [
+      { id: newId * 10 + 1, size_label: 'S', color_name: 'Standard', color_hex: '#8A9A86', sku: `ELV-${newId}-S`, stock_quantity: 15 },
+      { id: newId * 10 + 2, size_label: 'M', color_name: 'Standard', color_hex: '#8A9A86', sku: `ELV-${newId}-M`, stock_quantity: 20 },
+      { id: newId * 10 + 3, size_label: 'L', color_name: 'Standard', color_hex: '#8A9A86', sku: `ELV-${newId}-L`, stock_quantity: 18 },
+      { id: newId * 10 + 4, size_label: 'XL', color_name: 'Standard', color_hex: '#8A9A86', sku: `ELV-${newId}-XL`, stock_quantity: 12 },
+    ],
+    availableSizes: data.availableSizes || ['S', 'M', 'L', 'XL'],
+    availableColors: data.availableColors || [{ name: 'Standard', hex: '#8A9A86' }],
+    is_featured: !!data.isFeatured,
+    is_new: !!data.isNew,
+    is_active: data.isActive !== false,
+  };
+
+  list.unshift(newProduct);
+  localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(list));
+  return newProduct;
+}
+
+export function resetActiveProducts(): Product[] {
+  localStorage.removeItem(LOCAL_PRODUCTS_KEY);
+  return FALLBACK_PRODUCTS;
+}
+
+

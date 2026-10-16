@@ -77,6 +77,23 @@ export const AdminDashboard: React.FC = () => {
         </p>
       </div>
 
+      {/* Quick Action Banner */}
+      <div className="bg-white p-5 rounded-xl border border-sand/60 shadow-soft flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-lg font-semibold text-charcoal">Catalog & Pricing Manager</h2>
+          <p className="text-xs text-charcoal/60 mt-0.5">
+            Quickly edit product images, update selling prices, modify descriptions, and manage stock inventory.
+          </p>
+        </div>
+        <Link
+          to="/admin/products"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-sage hover:bg-sage-dark text-cream text-xs uppercase tracking-wider font-semibold rounded-lg shadow-sm transition-colors shrink-0"
+        >
+          <Package className="w-4 h-4" />
+          <span>Manage Products & Pricing</span>
+        </Link>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         {statCards.map((card, i) => {
